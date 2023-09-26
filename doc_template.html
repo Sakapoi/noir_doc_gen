@@ -48,30 +48,12 @@
             <col span="1" style="width: 80%;">
         </colgroup>
         <tbody>
-        
+        {{#each functions}}
         <tr>
-            <td>another_karta</td>
-            <td>a lot of 
-doc 
-comments
-</td>
+            <td>{{name}}</td>
+            <td>{{doc}}</td>
         </tr>
-        
-        <tr>
-            <td>main</td>
-            <td>doc comment</td>
-        </tr>
-        
-        <tr>
-            <td>karta</td>
-            <td>qwerty</td>
-        </tr>
-        
-        <tr>
-            <td>pub_karta</td>
-            <td>qwerty</td>
-        </tr>
-        
+        {{/each}}
         </tbody>
     </table>
 
@@ -83,7 +65,12 @@ comments
             <col span="1" style="width: 80%;">
         </colgroup>
         <tbody>
-        
+        {{#each modules}}
+        <tr>
+            <td>{{name}}</td>
+            <td>{{doc}}</td>
+        </tr>
+        {{/each}}
         </tbody>
     </table>
 
@@ -95,12 +82,12 @@ comments
             <col span="1" style="width: 80%;">
         </colgroup>
         <tbody>
-        
+        {{#each structs}}
         <tr>
-            <td>Karta</td>
-            <td> struct</td>
+            <td>{{name}}</td>
+            <td>{{doc}}</td>
         </tr>
-        
+        {{/each}}
         </tbody>
     </table>
 
@@ -112,7 +99,12 @@ comments
             <col span="1" style="width: 80%;">
         </colgroup>
         <tbody>
-        
+        {{#each traits}}
+        <tr>
+            <td>{{name}}</td>
+            <td>{{doc}}</td>
+        </tr>
+        {{/each}}
         </tbody>
     </table>
 </body>

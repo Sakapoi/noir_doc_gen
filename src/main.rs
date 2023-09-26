@@ -1,8 +1,8 @@
-use std::{io::{Write, Read}, collections::BTreeMap, fs::File};
-use handlebars::Handlebars;
-use noirc_frontend::{parser, lexer::Lexer, token::{Token, SpannedToken, Keyword}};
+use std::{io::{Write, Read}, fs::File};
+use handlebars::{Handlebars, to_json};
+use noirc_frontend::{lexer::Lexer, token::{Token, SpannedToken, Keyword}};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, serde::Serialize, PartialEq)]
 enum Type {
     Function,
     Module,
@@ -11,7 +11,7 @@ enum Type {
     Implementation,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, serde::Serialize)]
 struct Output {
     r#type: Type,
     name: String,
@@ -110,25 +110,20 @@ fn get_doc(input_file: &str) -> Result<Vec<SpannedToken>, Box<dyn std::error::Er
     Ok(parsed_str.0.0)
 }
 
-
-fn generate_doc(tokens: Vec<(String ,String)>) -> Result<(), Box<dyn std::error::Error>> {
+fn generate_doc(tokens: Vec<Output>) -> Result<(), Box<dyn std::error::Error>> {
     let mut handlebars = Handlebars::new();
 
-    handlebars.register_template_string("comments_template", include_str!("../comments_template.html"))
+    handlebars.register_template_file("doc_template", "doc_template.html")
     .expect("Failed to register HTML template");
 
-    let mut doc = Vec::new();
-
-    for i in tokens.iter() {
-        if i.0 == "doc-coments" {
-            doc.push(&i.1);
-        }
-    }
-
     let mut data = std::collections::BTreeMap::new();
-    data.insert("strings", &doc);
 
-    let rendered_html = handlebars.render("comments_template", &data)?;
+    data.insert("functions", to_json(&tokens.iter().filter(|Output {r#type, ..}| *r#type == Type::Function ).collect::<Vec<_>>()));
+    data.insert("modules", to_json(&tokens.iter().filter(|Output {r#type, ..}| *r#type == Type::Module ).collect::<Vec<_>>()));
+    data.insert("structs", to_json(&tokens.iter().filter(|Output {r#type, ..}| *r#type == Type::Struct ).collect::<Vec<_>>()));
+    data.insert("traits", to_json(&tokens.iter().filter(|Output {r#type, ..}| *r#type == Type::Trait ).collect::<Vec<_>>()));
+
+    let rendered_html = handlebars.render("doc_template", &data)?;
 
     let mut file = File::create("comments.html")?;
     file.write_all(rendered_html.as_bytes())?;
@@ -141,17 +136,7 @@ fn main() {
 
     let res = Output::to_output(doc);
 
-    dbg!(res);
+    dbg!(&res);
 
-    // generate_doc(doc).unwrap();
+    generate_doc(res).unwrap();
 }
-
-
-// {
-//     "type": "module",
-//     "name": "peter",
-//     "doc": "mega harosh 1 2 3",
-//     "path": "src/peter.nr"
-//   }
-
-

@@ -1,6 +1,6 @@
-///a
-///lot
-///of
+///a 
+///lot 
+///of 
 /**
 doc 
 comments
@@ -23,3 +23,9 @@ fn karta(){}
 ///qwe
 ///rty
 pub fn pub_karta(){}
+
+/// struct
+struct Karta {
+  mana: i32,
+  name: String,
+}
