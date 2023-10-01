@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rust Code Example</title>
+    <style>
+        body {
+            font-family: monospace;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        .code {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-left: 4px solid #3498db;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .line-numbers {
+            display: inline-block;
+            text-align: left;
+            margin-right: 10px;
+            color: #555;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="code">
+        <div class="line-numbers">
+            <table>
+                <colgroup>
+                    <col span="1" style="width: 5%;">
+                    <col span="1" style="width: 95%;">
+                </colgroup>
+                <tbody>
+                
+                <tr>
+                    <td>1</td>
+                    <td>//! Note the documentation for the primitives **str** and **[T]** (also</td>
+                </tr>
+                
+                <tr>
+                    <td>2</td>
+                    <td>//! called &#x27;slice&#x27;). Many method calls on **String** and **Vec&lt;T&gt;** are actually</td>
+                </tr>
+                
+                <tr>
+                    <td>3</td>
+                    <td>//! calls to methods on **str** and **[T]** respectively, via **deref</td>
+                </tr>
+                
+                <tr>
+                    <td>4</td>
+                    <td>//! coercions**.</td>
+                </tr>
+                
+                <tr>
+                    <td>5</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>6</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>7</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>8</td>
+                    <td>///doc comment</td>
+                </tr>
+                
+                <tr>
+                    <td>9</td>
+                    <td>/*</td>
+                </tr>
+                
+                <tr>
+                    <td>10</td>
+                    <td>  This is a block comment describing a complex function.</td>
+                </tr>
+                
+                <tr>
+                    <td>11</td>
+                    <td>*/</td>
+                </tr>
+                
+                <tr>
+                    <td>12</td>
+                    <td>fn main(x : Field, y : pub Field) {</td>
+                </tr>
+                
+                <tr>
+                    <td>13</td>
+                    <td>    assert(x !&#x3D; y);</td>
+                </tr>
+                
+                <tr>
+                    <td>14</td>
+                    <td>}</td>
+                </tr>
+                
+                <tr>
+                    <td>15</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>16</td>
+                    <td>///qwe</td>
+                </tr>
+                
+                <tr>
+                    <td>17</td>
+                    <td>///rty</td>
+                </tr>
+                
+                <tr>
+                    <td>18</td>
+                    <td>fn karta(){}</td>
+                </tr>
+                
+                <tr>
+                    <td>19</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>20</td>
+                    <td>///qwe</td>
+                </tr>
+                
+                <tr>
+                    <td>21</td>
+                    <td>///rty</td>
+                </tr>
+                
+                <tr>
+                    <td>22</td>
+                    <td>pub fn pub_karta(){}</td>
+                </tr>
+                
+                <tr>
+                    <td>23</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>24</td>
+                    <td>//! Data available to helper can be found in [Helper](struct.Helper.html). And there are more</td>
+                </tr>
+                
+                <tr>
+                    <td>25</td>
+                    <td>//! examples in [HelperDef](trait.HelperDef.html) page.</td>
+                </tr>
+                
+                <tr>
+                    <td>26</td>
+                    <td>//!</td>
+                </tr>
+                
+                <tr>
+                    <td>27</td>
+                    <td>//! You can learn more about helpers by looking into source code of built-in helpers.</td>
+                </tr>
+                
+                <tr>
+                    <td>28</td>
+                    <td>//!</td>
+                </tr>
+                
+                <tr>
+                    <td>29</td>
+                    <td>//! Like our JavaScript counterparts, handlebars allows user to define simple helpers with</td>
+                </tr>
+                
+                <tr>
+                    <td>30</td>
+                    <td>//! a scripting language, [rhai](https://docs.rs/crate/rhai/). This can be enabled by</td>
+                </tr>
+                
+                <tr>
+                    <td>31</td>
+                    <td>//! turning on &#x60;script_helper&#x60; feature flag.</td>
+                </tr>
+                
+                <tr>
+                    <td>32</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>33</td>
+                    <td>/// struct</td>
+                </tr>
+                
+                <tr>
+                    <td>34</td>
+                    <td>struct Karta {</td>
+                </tr>
+                
+                <tr>
+                    <td>35</td>
+                    <td>  mana: i32,</td>
+                </tr>
+                
+                <tr>
+                    <td>36</td>
+                    <td>  name: String,</td>
+                </tr>
+                
+                <tr>
+                    <td>37</td>
+                    <td>}</td>
+                </tr>
+                
+                <tr>
+                    <td>38</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>39</td>
+                    <td>///a </td>
+                </tr>
+                
+                <tr>
+                    <td>40</td>
+                    <td>///lot </td>
+                </tr>
+                
+                <tr>
+                    <td>41</td>
+                    <td>///of </td>
+                </tr>
+                
+                <tr>
+                    <td>42</td>
+                    <td>/**</td>
+                </tr>
+                
+                <tr>
+                    <td>43</td>
+                    <td>doc </td>
+                </tr>
+                
+                <tr>
+                    <td>44</td>
+                    <td>comments</td>
+                </tr>
+                
+                <tr>
+                    <td>45</td>
+                    <td>*/</td>
+                </tr>
+                
+                <tr>
+                    <td>46</td>
+                    <td>fn another_karta(){}</td>
+                </tr>
+                
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
