@@ -1,8 +1,8 @@
 use std::{io::{Write, Read, BufReader, BufRead}, fs::File};
-use handlebars::{Handlebars, to_json};
 use noirc_frontend::{lexer::Lexer, token::{Token, SpannedToken, Keyword, DocComments}};
+use askama::Template;
 
-#[derive(Debug, Clone, Copy, serde::Serialize, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 enum Type {
     Function,
     Module,
@@ -11,7 +11,7 @@ enum Type {
     OuterComment,
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone)]
 enum Info {
     Function{
         signature: String,
@@ -50,7 +50,7 @@ impl Info {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone)]
 struct Output {
     r#type: Type,
     name: String,
@@ -236,13 +236,19 @@ fn get_doc(input_file: &str) -> Result<Vec<SpannedToken>, Box<dyn std::error::Er
     Ok(parsed_str.0.0)
 }
 
-#[derive(Debug, serde::Serialize)]
+#[derive(Template)]
+#[template(path = "code_template.html")]
 struct Code {
+    codelines: Vec<CodeLine>,
+}
+
+#[derive(Debug)]
+struct CodeLine {
     number: u32,
     text: String,
 }
 
-fn get_text(input_file: &str) -> Result<Vec<Code>, Box<dyn std::error::Error>> {
+fn get_text(input_file: &str) -> Result<Vec<CodeLine>, Box<dyn std::error::Error>> {
     let file = File::open(input_file)?;
     let reader = BufReader::new(file);
     let mut code = Vec::new();
@@ -250,25 +256,18 @@ fn get_text(input_file: &str) -> Result<Vec<Code>, Box<dyn std::error::Error>> {
 
     for line in reader.lines() {
         i += 1;
-        code.push(Code{ number: i, text: line? });
+        code.push(CodeLine{ number: i, text: line? });
     }
 
     Ok(code)
 }
 
 fn generate_code_page(input_file: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let mut handlebars = Handlebars::new();
+    let codelines = get_text(input_file)?;
 
-    handlebars.register_template_file("code_template", "templates/code_template.html")
-    .expect("Failed to register HTML template");
+    let code = Code{ codelines };
 
-    let mut data = std::collections::BTreeMap::new();
-
-    let code = get_text(input_file)?;
-
-    data.insert("codelines", to_json(code.iter().collect::<Vec<_>>()));
-
-    let rendered_html = handlebars.render("code_template", &data)?;
+    let rendered_html = code.render().unwrap();
 
     let mut file = File::create("generated_doc/codepage.html")?;
     file.write_all(rendered_html.as_bytes())?;
@@ -276,7 +275,8 @@ fn generate_code_page(input_file: &str) -> Result<(), Box<dyn std::error::Error>
     Ok(())
 }
 
-#[derive(Debug, serde::Serialize)]
+#[derive(Debug, Template)]
+#[template(path = "func_template.html")]
 struct Function {
     name: String, 
     doc: String, 
@@ -284,18 +284,7 @@ struct Function {
 }
 
 fn generate_function_pages(func: Function) -> Result<(), Box<dyn std::error::Error>> {
-    let mut handlebars = Handlebars::new();
-
-    handlebars.register_template_file("func_template", "templates/func_template.html")
-    .expect("Failed to register HTML template");
-
-    let mut data = std::collections::BTreeMap::new();
-
-    let v = vec![&func];
-
-    data.insert("func", to_json(v.iter().collect::<Vec<_>>()));
-
-    let rendered_html = handlebars.render("func_template", &data)?;
+    let rendered_html = func.render().unwrap();
 
     let output_file_name = format!("generated_doc/{}.html", func.name);
 
@@ -305,26 +294,21 @@ fn generate_function_pages(func: Function) -> Result<(), Box<dyn std::error::Err
     Ok(())
 }
 
+#[derive(Debug, Template)]
+#[template(path = "doc_template.html")]
+struct AllOutput {
+    all_output: Vec<Output>,
+    filename: String,
+}
+
 fn generate_doc(input_file: &str) -> Result<(), Box<dyn std::error::Error>> {
     let doc = get_doc(input_file).unwrap();
 
     let tokens = Output::to_output(doc);
 
-    let mut handlebars = Handlebars::new();
+    let out = AllOutput{ all_output: tokens.clone(), filename: input_file.to_string() };
 
-    handlebars.register_template_file("doc_template", "templates/doc_template.html")
-    .expect("Failed to register HTML template");
-
-    let mut data = std::collections::BTreeMap::new();
-
-    data.insert("functions", to_json(&tokens.iter().filter(|Output {r#type, ..}| *r#type == Type::Function ).collect::<Vec<_>>()));
-    data.insert("modules", to_json(&tokens.iter().filter(|Output {r#type, ..}| *r#type == Type::Module ).collect::<Vec<_>>()));
-    data.insert("structs", to_json(&tokens.iter().filter(|Output {r#type, ..}| *r#type == Type::Struct ).collect::<Vec<_>>()));
-    data.insert("traits", to_json(&tokens.iter().filter(|Output {r#type, ..}| *r#type == Type::Trait ).collect::<Vec<_>>()));
-    data.insert("outer_comments", to_json(&tokens.iter().filter(|Output {r#type, ..}| *r#type == Type::OuterComment ).collect::<Vec<_>>()));
-    data.insert("filename", to_json(input_file));
-
-    let rendered_html = handlebars.render("doc_template", &data)?;
+    let rendered_html = out.render().unwrap();
 
     let mut file = File::create("generated_doc/mainpage.html")?;
     file.write_all(rendered_html.as_bytes())?;
@@ -345,10 +329,4 @@ fn generate_doc(input_file: &str) -> Result<(), Box<dyn std::error::Error>> {
 
 fn main() {
     generate_doc("input_files/prog.nr").unwrap();
-
-    // let mut file = File::open("outer_com.nr").unwrap();
-    // let mut contents = String::new();
-    // file.read_to_string(&mut contents).unwrap();
-
-    //dbg!(parse_program(&contents));
 }

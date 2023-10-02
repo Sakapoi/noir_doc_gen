@@ -83,9 +83,11 @@
             Module {{filename}}
             <a class="source-link" href="codepage.html" target="_blank">source</a>
         </h2>
-        {{#each outer_comments}}
-        <p><md-block>{{doc}}</md-block></p>
-        {{/each}}
+        {% for output in all_output %}
+        {% if output.type == Type::OuterComment %}
+        <p><md-block>{{output.doc}}</md-block></p>
+        {% endif %}
+        {% endfor %}
     </div>
     <h1>Functions</h1>
     <hr>
@@ -95,12 +97,14 @@
             <col span="1" style="width: 80%;">
         </colgroup>
         <tbody>
-        {{#each functions}}
+        {% for output in all_output %}
+        {% if output.type == Type::Function %}
         <tr>
-            <td class="mod-link" id="linkToPage">{{name}}</td>
-            <td>{{doc}}</td>
+            <td class="mod-link" id="linkToPage">{{output.name}}</td>
+            <td>{{output.doc}}</td>
         </tr>
-        {{/each}}
+        {% endif %}
+        {% endfor %}
         </tbody>
     </table>
 
@@ -112,12 +116,14 @@
             <col span="1" style="width: 80%;">
         </colgroup>
         <tbody>
-        {{#each modules}}
+        {% for output in all_output %}
+        {% if output.type == Type::Module %}
         <tr>
-            <td>{{name}}</td>
-            <td>{{doc}}</td>
+            <td>{{output.name}}</td>
+            <td>{{output.doc}}</td>
         </tr>
-        {{/each}}
+        {% endif %}
+        {% endfor %}
         </tbody>
     </table>
 
@@ -129,12 +135,14 @@
             <col span="1" style="width: 80%;">
         </colgroup>
         <tbody>
-        {{#each structs}}
+        {% for output in all_output %}
+        {% if output.type == Type::Struct %}
         <tr>
-            <td>{{name}}</td>
-            <td>{{doc}}</td>
+            <td>{{output.name}}</td>
+            <td>{{output.doc}}</td>
         </tr>
-        {{/each}}
+        {% endif %}
+        {% endfor %}
         </tbody>
     </table>
 
@@ -146,12 +154,14 @@
             <col span="1" style="width: 80%;">
         </colgroup>
         <tbody>
-        {{#each traits}}
+        {% for output in all_output %}
+        {% if output.type == Type::Trait %}
         <tr>
-            <td>{{name}}</td>
-            <td>{{doc}}</td>
+            <td>{{output.name}}</td>
+            <td>{{output.doc}}</td>
         </tr>
-        {{/each}}
+        {% endif %}
+        {% endfor %}
         </tbody>
     </table>
 

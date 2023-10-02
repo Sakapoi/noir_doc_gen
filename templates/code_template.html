@@ -40,12 +40,12 @@
                     <col span="1" style="width: 95%;">
                 </colgroup>
                 <tbody>
-                {{#each codelines}}
+                {% for code_line in codelines %}
                 <tr>
-                    <td>{{number}}</td>
-                    <td>{{text}}</td>
+                    <td>{{ code_line.number }}</td>
+                    <td>{{ code_line.text }}</td>
                 </tr>
-                {{/each}}
+                {% endfor %}
                 </tbody>
             </table>
         </div>
