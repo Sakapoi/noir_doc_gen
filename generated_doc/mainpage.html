@@ -2,7 +2,7 @@
 <html>
 <head>
     <script type="module" src="https://md-block.verou.me/md-block.js"></script>
-    <title>My Documentation</title>
+    <title>Main Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -124,17 +124,17 @@
         </tr>
         
         <tr>
-            <td class="mod-link" id="linkToPage">karta</td>
+            <td class="mod-link" id="linkToPage">simple_fn</td>
             <td>qwerty</td>
         </tr>
         
         <tr>
-            <td class="mod-link" id="linkToPage">pub_karta</td>
+            <td class="mod-link" id="linkToPage">pub_fn</td>
             <td>qwerty</td>
         </tr>
         
         <tr>
-            <td class="mod-link" id="linkToPage">another_karta</td>
+            <td class="mod-link" id="linkToPage">another_fn</td>
             <td>a lot of doc 
 comments</td>
         </tr>
@@ -164,7 +164,7 @@ comments</td>
         <tbody>
         
         <tr>
-            <td>Karta</td>
+            <td>MyStruct</td>
             <td> struct</td>
         </tr>
         
@@ -184,7 +184,7 @@ comments</td>
     </table>
 
     <script>
-        var tdElements = document.querySelectorAll('table td');
+        var tdElements = document.querySelectorAll('table .mod-link');
 
         tdElements.forEach(function(tdElement) {
             tdElement.addEventListener('click', function() {

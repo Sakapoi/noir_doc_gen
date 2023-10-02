@@ -15,11 +15,11 @@ fn main(x : Field, y : pub Field) {
 
 ///qwe
 ///rty
-fn karta(){}
+fn simple_fn(){}
 
 ///qwe
 ///rty
-pub fn pub_karta(){}
+pub fn pub_fn(){}
 
 //! Data available to helper can be found in [Helper](struct.Helper.html). And there are more
 //! examples in [HelperDef](trait.HelperDef.html) page.
@@ -31,7 +31,7 @@ pub fn pub_karta(){}
 //! turning on `script_helper` feature flag.
 
 /// struct
-struct Karta {
+struct MyStruct {
   mana: i32,
   name: String,
 }
@@ -43,4 +43,4 @@ struct Karta {
 doc 
 comments
 */
-fn another_karta(){}
+fn another_fn(){}

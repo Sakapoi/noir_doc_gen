@@ -48,7 +48,6 @@ impl Info {
             }
         }
     }
-    
 }
 
 #[derive(Debug, Clone, serde::Serialize)]
