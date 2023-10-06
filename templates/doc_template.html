@@ -10,7 +10,7 @@
             padding: 20px;
         }
 
-        h1 {
+        .h1 {
             background-color: #333;
             color: #fff;
             padding: 10px;
@@ -21,7 +21,7 @@
             border: 1px solid #ccc;
         }
 
-        table {
+        .table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
@@ -31,11 +31,6 @@
             text-align: left;
             padding: 8px;
             border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #333;
-            color: #fff;
         }
 
         .section {
@@ -52,7 +47,7 @@
 
         .source-link {
             position: absolute;
-            top: 70px;
+            top: 120px;
             right: 50px;
             font-size: 16px;
             color: #000;
@@ -75,95 +70,103 @@
             color: blue;
             cursor: pointer;
         }
+
+        
     </style>
 </head>
 <body>
-    <div class="section">
-        <h2>
-            Module {{filename}}
-            <a class="source-link" href="codepage.html" target="_blank">source</a>
-        </h2>
-        {% for output in all_output %}
-        {% if output.type == Type::OuterComment %}
-        <p><md-block>{{output.doc}}</md-block></p>
-        {% endif %}
-        {% endfor %}
+    <div class="search">
+        <input type="text" id="searchInput" placeholder="Search" style="width: 100%; font-size: 24px;">
     </div>
-    <h1>Functions</h1>
-    <hr>
-    <table>
-        <colgroup>
-            <col span="1" style="width: 20%;">
-            <col span="1" style="width: 80%;">
-        </colgroup>
-        <tbody>
-        {% for output in all_output %}
-        {% if output.type == Type::Function %}
-        <tr>
-            <td class="mod-link" id="linkToPage">{{output.name}}</td>
-            <td>{{output.doc}}</td>
-        </tr>
-        {% endif %}
-        {% endfor %}
-        </tbody>
-    </table>
 
-    <h1>Modules</h1>
-    <hr>
-    <table>
-        <colgroup>
-            <col span="1" style="width: 20%;">
-            <col span="1" style="width: 80%;">
-        </colgroup>
-        <tbody>
-        {% for output in all_output %}
-        {% if output.type == Type::Module %}
-        <tr>
-            <td>{{output.name}}</td>
-            <td>{{output.doc}}</td>
-        </tr>
-        {% endif %}
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="other">
+        <div class="section">
+            <h2>
+                Module {{filename}}
+                <a class="source-link" href="codepage.html" target="_blank">source</a>
+            </h2>
+            {% for output in all_output %}
+            {% if output.type == Type::OuterComment %}
+            <p><md-block>{{output.doc}}</md-block></p>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <h1 class="h1">Functions</h1>
+        <hr>
+        <table class="table">
+            <colgroup>
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 80%;">
+            </colgroup>
+            <tbody>
+            {% for output in all_output %}
+            {% if output.type == Type::Function %}
+            <tr>
+                <td class="mod-link" id="linkToPage">{{output.name}}</td>
+                <td>{{output.doc}}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
 
-    <h1>Structs</h1>
-    <hr>
-    <table>
-        <colgroup>
-            <col span="1" style="width: 20%;">
-            <col span="1" style="width: 80%;">
-        </colgroup>
-        <tbody>
-        {% for output in all_output %}
-        {% if output.type == Type::Struct %}
-        <tr>
-            <td>{{output.name}}</td>
-            <td>{{output.doc}}</td>
-        </tr>
-        {% endif %}
-        {% endfor %}
-        </tbody>
-    </table>
+        <h1 class="h1">Modules</h1>
+        <hr>
+        <table class="table">
+            <colgroup>
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 80%;">
+            </colgroup>
+            <tbody>
+            {% for output in all_output %}
+            {% if output.type == Type::Module %}
+            <tr>
+                <td>{{output.name}}</td>
+                <td>{{output.doc}}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
 
-    <h1>Traits</h1>
-    <hr>
-    <table>
-        <colgroup>
-            <col span="1" style="width: 20%;">
-            <col span="1" style="width: 80%;">
-        </colgroup>
-        <tbody>
-        {% for output in all_output %}
-        {% if output.type == Type::Trait %}
-        <tr>
-            <td>{{output.name}}</td>
-            <td>{{output.doc}}</td>
-        </tr>
-        {% endif %}
-        {% endfor %}
-        </tbody>
-    </table>
+        <h1 class="h1">Structs</h1>
+        <hr>
+        <table class="table">
+            <colgroup>
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 80%;">
+            </colgroup>
+            <tbody>
+            {% for output in all_output %}
+            {% if output.type == Type::Struct %}
+            <tr>
+                <td class="mod-link" id="linkToPage">{{output.name}}</td>
+                <td>{{output.doc}}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h1 class="h1">Traits</h1>
+        <hr>
+        <table class="table">
+            <colgroup>
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 80%;">
+            </colgroup>
+            <tbody>
+            {% for output in all_output %}
+            {% if output.type == Type::Trait %}
+            <tr>
+                <td class="mod-link" id="linkToPage">{{output.name}}</td>
+                <td>{{output.doc}}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     <script>
         var tdElements = document.querySelectorAll('table .mod-link');
@@ -174,6 +177,62 @@
                 var url = name + '.html';
                 window.location.href = url;
             });
+        });
+    </script>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.createElement('table');
+        searchResults.style.display = 'none';
+        searchResults.innerHTML = '<caption>Search results</caption><tbody></tbody>';
+        document.body.appendChild(searchResults);
+
+        const structures = [
+            { name: "Struct1", url: "struct1.html" },
+            { name: "Struct2", url: "struct2.html" },
+        ];
+
+        searchInput.addEventListener('input', () => {
+            const searchValue = searchInput.value.toLowerCase();
+            const filteredStructures = structures.filter(struct => struct.name.toLowerCase().includes(searchValue));
+
+            const tbody = searchResults.querySelector('tbody');
+            tbody.innerHTML = '';
+
+            // if (filteredStructures.length > 0) {
+            //     filteredStructures.forEach(struct => {
+            //         const row = document.createElement('tr');
+            //         const cell = document.createElement('td');
+            //         const link = document.createElement('a');
+            //         link.textContent = struct.name;
+            //         link.href = struct.url;
+            //         cell.appendChild(link);
+            //         row.appendChild(cell);
+            //         tbody.appendChild(row);
+            //     });
+
+            //     searchResults.style.display = 'table';
+            // } else {
+            //     tbody.innerHTML = '<tr><td>No results</td></tr>';
+            //     searchResults.style.display = 'table';
+            // }
+
+            var section = document.querySelector(".other");
+            var elementsToHide = section.querySelectorAll(":not(#searchInput)");
+
+            if (searchInput.value === "") {
+                for (var i = 0; i < elementsToHide.length; i++) {
+                    elementsToHide[i].style.display = "block";
+                }
+                searchInput.style.display = "block";
+                searchResults.style.display = "none";
+            } else {
+                for (var i = 0; i < elementsToHide.length; i++) {
+                    elementsToHide[i].style.display = "none";
+                }
+                searchInput.style.display = "block";
+                searchResults.style.display = "block";
+            }
         });
     </script>
       

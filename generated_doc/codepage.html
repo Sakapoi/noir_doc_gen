@@ -271,6 +271,916 @@
                     <td>fn another_fn(){}</td>
                 </tr>
                 
+                <tr>
+                    <td>47</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>48</td>
+                    <td>pub struct AnotherStruct {</td>
+                </tr>
+                
+                <tr>
+                    <td>49</td>
+                    <td>  pub name: String,</td>
+                </tr>
+                
+                <tr>
+                    <td>50</td>
+                    <td>  pub number: i32,</td>
+                </tr>
+                
+                <tr>
+                    <td>51</td>
+                    <td>}</td>
+                </tr>
+                
+                <tr>
+                    <td>52</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>53</td>
+                    <td>impl MyStruct {</td>
+                </tr>
+                
+                <tr>
+                    <td>54</td>
+                    <td>  fn new() {}</td>
+                </tr>
+                
+                <tr>
+                    <td>55</td>
+                    <td>}</td>
+                </tr>
+                
+                <tr>
+                    <td>56</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>57</td>
+                    <td>impl&lt;X: SampleUniform&gt; MyStruct&lt;X&gt; {</td>
+                </tr>
+                
+                <tr>
+                    <td>58</td>
+                    <td>    /// Create a new `Uniform` instance which samples uniformly from the half</td>
+                </tr>
+                
+                <tr>
+                    <td>59</td>
+                    <td>    /// open range `[low, high)` (excluding `high`). Panics if `low &gt;= high`.</td>
+                </tr>
+                
+                <tr>
+                    <td>60</td>
+                    <td>    pub fn new&lt;B1, B2&gt;(low: B1, high: B2) -&gt; Uniform&lt;X&gt;</td>
+                </tr>
+                
+                <tr>
+                    <td>61</td>
+                    <td>    where</td>
+                </tr>
+                
+                <tr>
+                    <td>62</td>
+                    <td>        B1: SampleBorrow&lt;X&gt; + Sized,</td>
+                </tr>
+                
+                <tr>
+                    <td>63</td>
+                    <td>        B2: SampleBorrow&lt;X&gt; + Sized,</td>
+                </tr>
+                
+                <tr>
+                    <td>64</td>
+                    <td>    {</td>
+                </tr>
+                
+                <tr>
+                    <td>65</td>
+                    <td>        Uniform(X::Sampler::new(low, high))</td>
+                </tr>
+                
+                <tr>
+                    <td>66</td>
+                    <td>    }</td>
+                </tr>
+                
+                <tr>
+                    <td>67</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>68</td>
+                    <td>    /// Create a new `Uniform` instance which samples uniformly from the closed</td>
+                </tr>
+                
+                <tr>
+                    <td>69</td>
+                    <td>    /// range `[low, high]` (inclusive). Panics if `low &gt; high`.</td>
+                </tr>
+                
+                <tr>
+                    <td>70</td>
+                    <td>    pub fn new_inclusive&lt;B1, B2&gt;(low: B1, high: B2) -&gt; Uniform&lt;X&gt;</td>
+                </tr>
+                
+                <tr>
+                    <td>71</td>
+                    <td>    where</td>
+                </tr>
+                
+                <tr>
+                    <td>72</td>
+                    <td>        B1: SampleBorrow&lt;X&gt; + Sized,</td>
+                </tr>
+                
+                <tr>
+                    <td>73</td>
+                    <td>        B2: SampleBorrow&lt;X&gt; + Sized,</td>
+                </tr>
+                
+                <tr>
+                    <td>74</td>
+                    <td>    {</td>
+                </tr>
+                
+                <tr>
+                    <td>75</td>
+                    <td>        Uniform(X::Sampler::new_inclusive(low, high))</td>
+                </tr>
+                
+                <tr>
+                    <td>76</td>
+                    <td>    }</td>
+                </tr>
+                
+                <tr>
+                    <td>77</td>
+                    <td>}</td>
+                </tr>
+                
+                <tr>
+                    <td>78</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>79</td>
+                    <td>/// Range that supports generating a single sample efficiently.</td>
+                </tr>
+                
+                <tr>
+                    <td>80</td>
+                    <td>///</td>
+                </tr>
+                
+                <tr>
+                    <td>81</td>
+                    <td>/// Any type implementing this trait can be used to specify the sampled range</td>
+                </tr>
+                
+                <tr>
+                    <td>82</td>
+                    <td>/// for `Rng::gen_range`.</td>
+                </tr>
+                
+                <tr>
+                    <td>83</td>
+                    <td>pub trait SampleRange&lt;T&gt; {</td>
+                </tr>
+                
+                <tr>
+                    <td>84</td>
+                    <td>    /// Generate a sample from the given range.</td>
+                </tr>
+                
+                <tr>
+                    <td>85</td>
+                    <td>    fn sample_single&lt;R: RngCore + ?Sized&gt;(self, rng: &amp;mut R) -&gt; T;</td>
+                </tr>
+                
+                <tr>
+                    <td>86</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>87</td>
+                    <td>    /// Check whether the range is empty.</td>
+                </tr>
+                
+                <tr>
+                    <td>88</td>
+                    <td>    fn is_empty(&amp;self) -&gt; bool;</td>
+                </tr>
+                
+                <tr>
+                    <td>89</td>
+                    <td>}</td>
+                </tr>
+                
+                <tr>
+                    <td>90</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>91</td>
+                    <td>impl&lt;T: SampleUniform + PartialOrd&gt; SampleRange&lt;T&gt; for AnotherStruct&lt;T&gt; {</td>
+                </tr>
+                
+                <tr>
+                    <td>92</td>
+                    <td>    #[inline]</td>
+                </tr>
+                
+                <tr>
+                    <td>93</td>
+                    <td>    fn sample_single&lt;R: RngCore + ?Sized&gt;(self, rng: &amp;mut R) -&gt; T {</td>
+                </tr>
+                
+                <tr>
+                    <td>94</td>
+                    <td>        T::Sampler::sample_single(self.start, self.end, rng)</td>
+                </tr>
+                
+                <tr>
+                    <td>95</td>
+                    <td>    }</td>
+                </tr>
+                
+                <tr>
+                    <td>96</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>97</td>
+                    <td>    #[inline]</td>
+                </tr>
+                
+                <tr>
+                    <td>98</td>
+                    <td>    fn is_empty(&amp;self) -&gt; bool {</td>
+                </tr>
+                
+                <tr>
+                    <td>99</td>
+                    <td>        !(self.start &lt; self.end)</td>
+                </tr>
+                
+                <tr>
+                    <td>100</td>
+                    <td>    }</td>
+                </tr>
+                
+                <tr>
+                    <td>101</td>
+                    <td>}</td>
+                </tr>
+                
+                <tr>
+                    <td>102</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>103</td>
+                    <td>/// this is a trait =-=</td>
+                </tr>
+                
+                <tr>
+                    <td>104</td>
+                    <td>//! Helper trait handling actual uniform sampling.</td>
+                </tr>
+                
+                <tr>
+                    <td>105</td>
+                    <td>//!</td>
+                </tr>
+                
+                <tr>
+                    <td>106</td>
+                    <td>//! See the [module documentation] on how to implement [`Uniform`] range</td>
+                </tr>
+                
+                <tr>
+                    <td>107</td>
+                    <td>//! sampling for a custom type.</td>
+                </tr>
+                
+                <tr>
+                    <td>108</td>
+                    <td>//!</td>
+                </tr>
+                
+                <tr>
+                    <td>109</td>
+                    <td>//! Implementation of [`sample_single`] is optional, and is only useful when</td>
+                </tr>
+                
+                <tr>
+                    <td>110</td>
+                    <td>//! the implementation can be faster than `Self::new(low, high).sample(rng)`.</td>
+                </tr>
+                
+                <tr>
+                    <td>111</td>
+                    <td>//!</td>
+                </tr>
+                
+                <tr>
+                    <td>112</td>
+                    <td>//! [module documentation]: crate::distributions::uniform</td>
+                </tr>
+                
+                <tr>
+                    <td>113</td>
+                    <td>//! [`sample_single`]: UniformSampler::sample_single</td>
+                </tr>
+                
+                <tr>
+                    <td>114</td>
+                    <td>pub trait UniformSampler: Sized {</td>
+                </tr>
+                
+                <tr>
+                    <td>115</td>
+                    <td>    /// The type sampled by this implementation.</td>
+                </tr>
+                
+                <tr>
+                    <td>116</td>
+                    <td>    type X;</td>
+                </tr>
+                
+                <tr>
+                    <td>117</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>118</td>
+                    <td>    /// Construct self, with inclusive lower bound and exclusive upper bound</td>
+                </tr>
+                
+                <tr>
+                    <td>119</td>
+                    <td>    /// `[low, high)`.</td>
+                </tr>
+                
+                <tr>
+                    <td>120</td>
+                    <td>    ///</td>
+                </tr>
+                
+                <tr>
+                    <td>121</td>
+                    <td>    /// Usually users should not call this directly but instead use</td>
+                </tr>
+                
+                <tr>
+                    <td>122</td>
+                    <td>    /// `Uniform::new`, which asserts that `low &lt; high` before calling this.</td>
+                </tr>
+                
+                <tr>
+                    <td>123</td>
+                    <td>    fn new&lt;B1, B2&gt;(low: B1, high: B2) -&gt; Self</td>
+                </tr>
+                
+                <tr>
+                    <td>124</td>
+                    <td>    where</td>
+                </tr>
+                
+                <tr>
+                    <td>125</td>
+                    <td>        B1: SampleBorrow&lt;Self::X&gt; + Sized,</td>
+                </tr>
+                
+                <tr>
+                    <td>126</td>
+                    <td>        B2: SampleBorrow&lt;Self::X&gt; + Sized;</td>
+                </tr>
+                
+                <tr>
+                    <td>127</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>128</td>
+                    <td>    /// Construct self, with inclusive bounds `[low, high]`.</td>
+                </tr>
+                
+                <tr>
+                    <td>129</td>
+                    <td>    ///</td>
+                </tr>
+                
+                <tr>
+                    <td>130</td>
+                    <td>    /// Usually users should not call this directly but instead use</td>
+                </tr>
+                
+                <tr>
+                    <td>131</td>
+                    <td>    /// `Uniform::new_inclusive`, which asserts that `low &lt;= high` before</td>
+                </tr>
+                
+                <tr>
+                    <td>132</td>
+                    <td>    /// calling this.</td>
+                </tr>
+                
+                <tr>
+                    <td>133</td>
+                    <td>    fn new_inclusive&lt;B1, B2&gt;(low: B1, high: B2) -&gt; Self</td>
+                </tr>
+                
+                <tr>
+                    <td>134</td>
+                    <td>    where</td>
+                </tr>
+                
+                <tr>
+                    <td>135</td>
+                    <td>        B1: SampleBorrow&lt;Self::X&gt; + Sized,</td>
+                </tr>
+                
+                <tr>
+                    <td>136</td>
+                    <td>        B2: SampleBorrow&lt;Self::X&gt; + Sized;</td>
+                </tr>
+                
+                <tr>
+                    <td>137</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>138</td>
+                    <td>    /// Sample a value.</td>
+                </tr>
+                
+                <tr>
+                    <td>139</td>
+                    <td>    fn sample&lt;R: Rng + ?Sized&gt;(&amp;self, rng: &amp;mut R) -&gt; Self::X;</td>
+                </tr>
+                
+                <tr>
+                    <td>140</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>141</td>
+                    <td>    /// Sample a single value uniformly from a range with inclusive lower bound</td>
+                </tr>
+                
+                <tr>
+                    <td>142</td>
+                    <td>    /// and exclusive upper bound `[low, high)`.</td>
+                </tr>
+                
+                <tr>
+                    <td>143</td>
+                    <td>    ///</td>
+                </tr>
+                
+                <tr>
+                    <td>144</td>
+                    <td>    /// By default this is implemented using</td>
+                </tr>
+                
+                <tr>
+                    <td>145</td>
+                    <td>    /// `UniformSampler::new(low, high).sample(rng)`. However, for some types</td>
+                </tr>
+                
+                <tr>
+                    <td>146</td>
+                    <td>    /// more optimal implementations for single usage may be provided via this</td>
+                </tr>
+                
+                <tr>
+                    <td>147</td>
+                    <td>    /// method (which is the case for integers and floats).</td>
+                </tr>
+                
+                <tr>
+                    <td>148</td>
+                    <td>    /// Results may not be identical.</td>
+                </tr>
+                
+                <tr>
+                    <td>149</td>
+                    <td>    ///</td>
+                </tr>
+                
+                <tr>
+                    <td>150</td>
+                    <td>    /// Note that to use this method in a generic context, the type needs to be</td>
+                </tr>
+                
+                <tr>
+                    <td>151</td>
+                    <td>    /// retrieved via `SampleUniform::Sampler` as follows:</td>
+                </tr>
+                
+                <tr>
+                    <td>152</td>
+                    <td>    /// ```</td>
+                </tr>
+                
+                <tr>
+                    <td>153</td>
+                    <td>    /// use rand::{thread_rng, distributions::uniform::{SampleUniform, UniformSampler}};</td>
+                </tr>
+                
+                <tr>
+                    <td>154</td>
+                    <td>    /// # #[allow(unused)]</td>
+                </tr>
+                
+                <tr>
+                    <td>155</td>
+                    <td>    /// fn sample_from_range&lt;T: SampleUniform&gt;(lb: T, ub: T) -&gt; T {</td>
+                </tr>
+                
+                <tr>
+                    <td>156</td>
+                    <td>    ///     let mut rng = thread_rng();</td>
+                </tr>
+                
+                <tr>
+                    <td>157</td>
+                    <td>    ///     &lt;T as SampleUniform&gt;::Sampler::sample_single(lb, ub, &amp;mut rng)</td>
+                </tr>
+                
+                <tr>
+                    <td>158</td>
+                    <td>    /// }</td>
+                </tr>
+                
+                <tr>
+                    <td>159</td>
+                    <td>    /// ```</td>
+                </tr>
+                
+                <tr>
+                    <td>160</td>
+                    <td>    fn sample_single&lt;R: Rng + ?Sized, B1, B2&gt;(low: B1, high: B2, rng: &amp;mut R) -&gt; Self::X</td>
+                </tr>
+                
+                <tr>
+                    <td>161</td>
+                    <td>    where</td>
+                </tr>
+                
+                <tr>
+                    <td>162</td>
+                    <td>        B1: SampleBorrow&lt;Self::X&gt; + Sized,</td>
+                </tr>
+                
+                <tr>
+                    <td>163</td>
+                    <td>        B2: SampleBorrow&lt;Self::X&gt; + Sized,</td>
+                </tr>
+                
+                <tr>
+                    <td>164</td>
+                    <td>    {</td>
+                </tr>
+                
+                <tr>
+                    <td>165</td>
+                    <td>        let uniform: Self = UniformSampler::new(low, high);</td>
+                </tr>
+                
+                <tr>
+                    <td>166</td>
+                    <td>        uniform.sample(rng)</td>
+                </tr>
+                
+                <tr>
+                    <td>167</td>
+                    <td>    }</td>
+                </tr>
+                
+                <tr>
+                    <td>168</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>169</td>
+                    <td>    fn new_fn() -&gt; i32;</td>
+                </tr>
+                
+                <tr>
+                    <td>170</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>171</td>
+                    <td>    /// Sample a single value uniformly from a range with inclusive lower bound</td>
+                </tr>
+                
+                <tr>
+                    <td>172</td>
+                    <td>    /// and inclusive upper bound `[low, high]`.</td>
+                </tr>
+                
+                <tr>
+                    <td>173</td>
+                    <td>    ///</td>
+                </tr>
+                
+                <tr>
+                    <td>174</td>
+                    <td>    /// By default this is implemented using</td>
+                </tr>
+                
+                <tr>
+                    <td>175</td>
+                    <td>    /// `UniformSampler::new_inclusive(low, high).sample(rng)`. However, for</td>
+                </tr>
+                
+                <tr>
+                    <td>176</td>
+                    <td>    /// some types more optimal implementations for single usage may be provided</td>
+                </tr>
+                
+                <tr>
+                    <td>177</td>
+                    <td>    /// via this method.</td>
+                </tr>
+                
+                <tr>
+                    <td>178</td>
+                    <td>    /// Results may not be identical.</td>
+                </tr>
+                
+                <tr>
+                    <td>179</td>
+                    <td>    fn sample_single_inclusive&lt;R: Rng + ?Sized, B1, B2&gt;(low: B1, high: B2, rng: &amp;mut R)</td>
+                </tr>
+                
+                <tr>
+                    <td>180</td>
+                    <td>        -&gt; Self::X</td>
+                </tr>
+                
+                <tr>
+                    <td>181</td>
+                    <td>        where B1: SampleBorrow&lt;Self::X&gt; + Sized,</td>
+                </tr>
+                
+                <tr>
+                    <td>182</td>
+                    <td>              B2: SampleBorrow&lt;Self::X&gt; + Sized</td>
+                </tr>
+                
+                <tr>
+                    <td>183</td>
+                    <td>    {</td>
+                </tr>
+                
+                <tr>
+                    <td>184</td>
+                    <td>        let uniform: Self = UniformSampler::new_inclusive(low, high);</td>
+                </tr>
+                
+                <tr>
+                    <td>185</td>
+                    <td>        uniform.sample(rng)</td>
+                </tr>
+                
+                <tr>
+                    <td>186</td>
+                    <td>    }</td>
+                </tr>
+                
+                <tr>
+                    <td>187</td>
+                    <td>}</td>
+                </tr>
+                
+                <tr>
+                    <td>188</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>189</td>
+                    <td>impl UniformSampler for UniformChar {</td>
+                </tr>
+                
+                <tr>
+                    <td>190</td>
+                    <td>    type X = char;</td>
+                </tr>
+                
+                <tr>
+                    <td>191</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>192</td>
+                    <td>    #[inline] // if the range is constant, this helps LLVM to do the</td>
+                </tr>
+                
+                <tr>
+                    <td>193</td>
+                    <td>              // calculations at compile-time.</td>
+                </tr>
+                
+                <tr>
+                    <td>194</td>
+                    <td>    fn new&lt;B1, B2&gt;(low_b: B1, high_b: B2) -&gt; Self</td>
+                </tr>
+                
+                <tr>
+                    <td>195</td>
+                    <td>    where</td>
+                </tr>
+                
+                <tr>
+                    <td>196</td>
+                    <td>        B1: SampleBorrow&lt;Self::X&gt; + Sized,</td>
+                </tr>
+                
+                <tr>
+                    <td>197</td>
+                    <td>        B2: SampleBorrow&lt;Self::X&gt; + Sized,</td>
+                </tr>
+                
+                <tr>
+                    <td>198</td>
+                    <td>    {</td>
+                </tr>
+                
+                <tr>
+                    <td>199</td>
+                    <td>        let low = char_to_comp_u32(*low_b.borrow());</td>
+                </tr>
+                
+                <tr>
+                    <td>200</td>
+                    <td>        let high = char_to_comp_u32(*high_b.borrow());</td>
+                </tr>
+                
+                <tr>
+                    <td>201</td>
+                    <td>        let sampler = UniformInt::&lt;u32&gt;::new(low, high);</td>
+                </tr>
+                
+                <tr>
+                    <td>202</td>
+                    <td>        UniformChar { sampler }</td>
+                </tr>
+                
+                <tr>
+                    <td>203</td>
+                    <td>    }</td>
+                </tr>
+                
+                <tr>
+                    <td>204</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>205</td>
+                    <td>    #[inline] // if the range is constant, this helps LLVM to do the</td>
+                </tr>
+                
+                <tr>
+                    <td>206</td>
+                    <td>              // calculations at compile-time.</td>
+                </tr>
+                
+                <tr>
+                    <td>207</td>
+                    <td>    fn new_inclusive&lt;B1, B2&gt;(low_b: B1, high_b: B2) -&gt; Self</td>
+                </tr>
+                
+                <tr>
+                    <td>208</td>
+                    <td>    where</td>
+                </tr>
+                
+                <tr>
+                    <td>209</td>
+                    <td>        B1: SampleBorrow&lt;Self::X&gt; + Sized,</td>
+                </tr>
+                
+                <tr>
+                    <td>210</td>
+                    <td>        B2: SampleBorrow&lt;Self::X&gt; + Sized,</td>
+                </tr>
+                
+                <tr>
+                    <td>211</td>
+                    <td>    {</td>
+                </tr>
+                
+                <tr>
+                    <td>212</td>
+                    <td>        let low = char_to_comp_u32(*low_b.borrow());</td>
+                </tr>
+                
+                <tr>
+                    <td>213</td>
+                    <td>        let high = char_to_comp_u32(*high_b.borrow());</td>
+                </tr>
+                
+                <tr>
+                    <td>214</td>
+                    <td>        let sampler = UniformInt::&lt;u32&gt;::new_inclusive(low, high);</td>
+                </tr>
+                
+                <tr>
+                    <td>215</td>
+                    <td>        UniformChar { sampler }</td>
+                </tr>
+                
+                <tr>
+                    <td>216</td>
+                    <td>    }</td>
+                </tr>
+                
+                <tr>
+                    <td>217</td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td>218</td>
+                    <td>    fn sample&lt;R: Rng + ?Sized&gt;(&amp;self, rng: &amp;mut R) -&gt; Self::X {</td>
+                </tr>
+                
+                <tr>
+                    <td>219</td>
+                    <td>        let mut x = self.sampler.sample(rng);</td>
+                </tr>
+                
+                <tr>
+                    <td>220</td>
+                    <td>        if x &gt;= CHAR_SURROGATE_START {</td>
+                </tr>
+                
+                <tr>
+                    <td>221</td>
+                    <td>            x += CHAR_SURROGATE_LEN;</td>
+                </tr>
+                
+                <tr>
+                    <td>222</td>
+                    <td>        }</td>
+                </tr>
+                
+                <tr>
+                    <td>223</td>
+                    <td>        // SAFETY: x must not be in surrogate range or greater than char::MAX.</td>
+                </tr>
+                
+                <tr>
+                    <td>224</td>
+                    <td>        // This relies on range constructors which accept char arguments.</td>
+                </tr>
+                
+                <tr>
+                    <td>225</td>
+                    <td>        // Validity of input char values is assumed.</td>
+                </tr>
+                
+                <tr>
+                    <td>226</td>
+                    <td>        unsafe { core::char::from_u32_unchecked(x) }</td>
+                </tr>
+                
+                <tr>
+                    <td>227</td>
+                    <td>    }</td>
+                </tr>
+                
+                <tr>
+                    <td>228</td>
+                    <td>}</td>
+                </tr>
+                
                 </tbody>
             </table>
         </div>

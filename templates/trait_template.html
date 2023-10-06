@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script type="module" src="https://md-block.verou.me/md-block.js"></script>
     <title>{{ name }}</title>
     <style>
         body {
@@ -69,15 +70,62 @@
             color: blue;
             cursor: pointer;
         }
+
+        li {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
     </style>
 </head>
 <body>
-    <div class="section">
-        <h2>
-            Function {{name}}
-        </h2>
-        <pre>{{signature}}</pre>
+    <div class="trait-header">
+        <h1>Trait {{ name }}</h1>
+        <pre>{{ signature }}</pre>
         <p><md-block>{{ doc }}</md-block></p>
+    </div>
+
+    <div class="documentation">
+        <h2 class="h1">Documentation</h2>
+        <hr>
+        <p><md_block>{{ additional_doc }}</md_block></p>
+    </div>
+
+    <div class="methods">
+        <h2 class="h1">Required methods</h2>
+        <hr>
+        <ul>
+            {% for method in required_methods %}
+            <li>{{ method.signature }}</li>
+            <a>{{ method.doc }}</a>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="methods">
+        <h2 class="h1">Provided methods</h2>
+        <hr>
+        <ul>
+            {% for method in provided_methods %}
+            <li>{{ method.signature }}</li>
+            <a>{{ method.doc }}</a>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="implementations">
+        <h2 class="h1">Implementors</h2>
+        <hr> 
+        <ul>
+            {% for implementation in implementations %}
+            <li>{{ implementation.signature }}</li> 
+            <ul>
+                {% for func in implementation.functions %}
+                <li>{{ func.signature }}</li> 
+                {% endfor %}
+            </ul>
+            {% endfor %}
+        </ul>
     </div>
 </body>
 </html>

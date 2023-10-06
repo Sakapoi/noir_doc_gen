@@ -17,3 +17,11 @@ This program generates the documentation files for the Noir language. The input 
 ### Function page
 
 ![functionpage](Screenshots/Function_page.png)
+
+### Structure page
+
+![structpage](Screenshots/Struct_page.png)
+
+### Trait page
+
+![traitpage](Screenshots/Trait_page.png)
