@@ -25,3 +25,7 @@ This program generates the documentation files for the Noir language. The input 
 ### Trait page
 
 ![traitpage](Screenshots/Trait_page.png)
+
+### Search page
+
+![searchpage](Screenshots/Search_page.png)

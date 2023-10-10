@@ -1,8 +1,8 @@
-use std::{io::{Write, Read, BufReader, BufRead}, fs::File, fmt, vec};
+use std::{io::{Write, Read, BufReader, BufRead}, fs::File, fmt, vec, collections::HashMap};
 use noirc_frontend::{lexer::Lexer, token::{Token, SpannedToken, Keyword, DocComments}};
 use askama::Template;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, Eq, Hash, PartialEq)]
 enum Type {
     Function,
     Module,
@@ -23,7 +23,7 @@ impl fmt::Display for Type {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, Hash, PartialEq)]
 enum Info {
     Function{
         signature: String,
@@ -586,7 +586,7 @@ fn generate_code_page(input_file: &str) -> Result<(), Box<dyn std::error::Error>
     Ok(())
 }
 
-#[derive(Debug, Clone, Template)]
+#[derive(Debug, Clone, Template, Eq, Hash, PartialEq)]
 #[template(path = "func_template.html")]
 struct Function {
     name: String, 
@@ -619,7 +619,7 @@ struct Structure {
     implementations: Vec<Implementation>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, Hash, PartialEq)]
 struct Implementation {
     signature: String,
     functions: Vec<Function>,
@@ -748,7 +748,25 @@ struct AllOutput {
     filename: String,
 }
 
-fn generate_doc(input_file: &str) -> Result<(), Box<dyn std::error::Error>> {
+#[derive(Debug, Template)]
+#[template(path = "search_results_template.html")]
+struct SearchResults {
+    results: Vec<Output>
+}
+
+fn generate_search_page(res: SearchResults) -> Result<(), Box<dyn std::error::Error>> {
+    let rendered_html = res.render().unwrap();
+
+    let mut file = File::create("generated_doc/search_results.html")?;
+    file.write_all(rendered_html.as_bytes())?;
+
+    Ok(())
+}
+
+/// the main function of the program
+/// generates all documentation files
+/// the input file is a file with a Noir code
+pub fn generate_doc(input_file: &str) -> Result<(), Box<dyn std::error::Error>> {
     let doc = get_doc(input_file).unwrap();
 
     let tokens = Output::to_output(doc);
@@ -761,6 +779,10 @@ fn generate_doc(input_file: &str) -> Result<(), Box<dyn std::error::Error>> {
     file.write_all(rendered_html.as_bytes())?;
 
     generate_code_page(input_file)?;
+
+    let res = SearchResults{ results: out.all_output };
+
+    generate_search_page(res)?;
 
     for i in tokens.iter() {
         match i.r#type {
@@ -805,13 +827,29 @@ fn generate_doc(input_file: &str) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub struct Map {
+    map: HashMap<Info, String>,
+}
+
+/// returns all necessary information for generating documentation
+/// the input file is a file with a Noir code
+pub fn get_map(input_file: &str) -> Map {
+    let mut map = HashMap::new();
+
+    let doc = get_doc(input_file).unwrap();
+
+    let tokens = Output::to_output(doc);
+
+    for token in tokens.iter() {
+        map.insert(token.information.clone(), token.doc.clone());
+    }
+
+    Map { map }
+}
+
 fn main() {
     generate_doc("input_files/prog.nr").unwrap();
 
-    // let mut file = File::open("input_files/outer_com.nr").unwrap();
-    // let mut contents = String::new();
-    // file.read_to_string(&mut contents).unwrap();
-
-    // let res = parse_program(&contents);
-    // let impls = dbg!(res.0.impls);
+    dbg!(get_map("input_files/prog.nr"));
 }

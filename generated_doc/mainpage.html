@@ -71,6 +71,16 @@
             cursor: pointer;
         }
 
+        #searchButton {
+            position: fixed;
+            top: 35px;
+            right: 35px;
+            background: none; 
+            border: none;
+            width: 45px; 
+            height: 45px;
+        }
+
         
     </style>
 </head>
@@ -78,6 +88,9 @@
     <div class="search">
         <input type="text" id="searchInput" placeholder="Search" style="width: 100%; font-size: 24px;">
     </div>
+    <button id="searchButton" style="display: none;">
+        <img src="../Screenshots/search.png" alt="Search" style="width: 100%; height: 100%;">
+    </button>
 
     <div class="other">
         <div class="section">
@@ -535,56 +548,26 @@ comments</td>
 
     <script>
         const searchInput = document.getElementById('searchInput');
-        const searchResults = document.createElement('table');
-        searchResults.style.display = 'none';
-        searchResults.innerHTML = '<caption>Search results</caption><tbody></tbody>';
-        document.body.appendChild(searchResults);
-
-        const structures = [
-            { name: "Struct1", url: "struct1.html" },
-            { name: "Struct2", url: "struct2.html" },
-        ];
+        const searchButton = document.getElementById('searchButton');
 
         searchInput.addEventListener('input', () => {
-            const searchValue = searchInput.value.toLowerCase();
-            const filteredStructures = structures.filter(struct => struct.name.toLowerCase().includes(searchValue));
-
-            const tbody = searchResults.querySelector('tbody');
-            tbody.innerHTML = '';
-
-            // if (filteredStructures.length > 0) {
-            //     filteredStructures.forEach(struct => {
-            //         const row = document.createElement('tr');
-            //         const cell = document.createElement('td');
-            //         const link = document.createElement('a');
-            //         link.textContent = struct.name;
-            //         link.href = struct.url;
-            //         cell.appendChild(link);
-            //         row.appendChild(cell);
-            //         tbody.appendChild(row);
-            //     });
-
-            //     searchResults.style.display = 'table';
-            // } else {
-            //     tbody.innerHTML = '<tr><td>No results</td></tr>';
-            //     searchResults.style.display = 'table';
-            // }
-
-            var section = document.querySelector(".other");
-            var elementsToHide = section.querySelectorAll(":not(#searchInput)");
-
-            if (searchInput.value === "") {
-                for (var i = 0; i < elementsToHide.length; i++) {
-                    elementsToHide[i].style.display = "block";
-                }
-                searchInput.style.display = "block";
-                searchResults.style.display = "none";
+            if (searchInput.value.trim() !== '') {
+                searchButton.style.display = 'block';
             } else {
-                for (var i = 0; i < elementsToHide.length; i++) {
-                    elementsToHide[i].style.display = "none";
-                }
-                searchInput.style.display = "block";
-                searchResults.style.display = "block";
+                searchButton.style.display = 'none';
+            }
+        });
+
+        searchButton.addEventListener('click', () => {
+            const searchTerm = searchInput.value.trim();
+            if (searchTerm !== '') {
+                window.location.href = `search_results.html?search=${encodeURIComponent(searchTerm)}`;
+            }
+        });
+
+        searchInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                searchButton.click();
             }
         });
     </script>
