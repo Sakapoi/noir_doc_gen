@@ -1,12 +1,12 @@
-fn main(x : Field, y : pub Field) {
+fn main1(x : Field, y : pub Field) {
     assert(x != y);
 }
 
-struct MyStruct {
+struct MyStruct1 {
   mana: i32,
   name: String,
 }
 
-impl MyStruct {
+impl MyStruct1 {
     fn new() {}
 }

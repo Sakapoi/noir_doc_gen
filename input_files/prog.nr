@@ -226,3 +226,19 @@ impl UniformSampler for UniformChar {
         unsafe { core::char::from_u32_unchecked(x) }
     }
 }
+
+mod MyModule {
+    ///module function
+    fn module_fn() {
+        let a = 100;
+    }
+
+    struct MyStruct {
+        mana: i32,
+        name: String,
+    }
+}
+
+mod another_module;
+
+fn yes () {}

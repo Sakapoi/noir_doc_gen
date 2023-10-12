@@ -134,7 +134,7 @@
             {% for output in all_output %}
             {% if output.type == Type::Module %}
             <tr>
-                <td>{{output.name}}</td>
+                <td class="mod-link" id="linkToPage">{{output.name}}</td>
                 <td>{{output.doc}}</td>
             </tr>
             {% endif %}
@@ -197,6 +197,8 @@
         const searchInput = document.getElementById('searchInput');
         const searchButton = document.getElementById('searchButton');
 
+        const modulename = "search_results_{{filename}}.html";
+
         searchInput.addEventListener('input', () => {
             if (searchInput.value.trim() !== '') {
                 searchButton.style.display = 'block';
@@ -208,7 +210,7 @@
         searchButton.addEventListener('click', () => {
             const searchTerm = searchInput.value.trim();
             if (searchTerm !== '') {
-                window.location.href = `search_results.html?search=${encodeURIComponent(searchTerm)}`;
+                window.location.href = modulename + `?search=${encodeURIComponent(searchTerm)}`;
             }
         });
 

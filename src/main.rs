@@ -1,5 +1,5 @@
-use std::{io::{Write, Read, BufReader, BufRead}, fs::File, fmt, vec, collections::HashMap};
-use noirc_frontend::{lexer::Lexer, token::{Token, SpannedToken, Keyword, DocComments}};
+use std::{io::{Write, Read, BufReader, BufRead}, fs::{File, self}, fmt, vec, collections::HashMap, path::Path};
+use noirc_frontend::{lexer::Lexer, token::{Token, SpannedToken, Keyword, DocComments}, hir::resolution::errors::Span};
 use askama::Template;
 
 #[derive(Debug, Clone, Copy, Eq, Hash, PartialEq)]
@@ -29,7 +29,7 @@ enum Info {
         signature: String,
     },
     Module{
-        // ??
+        content: Vec<Output>,
     },
     Struct {
         signature: String,
@@ -113,9 +113,20 @@ impl Info {
             }
         }
     }
+
+    fn get_content(&self) -> Option<Vec<Output>> {
+        match self {
+            Info::Module { content } => {
+                Some(content.clone())
+            }
+            _ => {
+                None
+            }
+        }
+    }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 struct Output {
     r#type: Type,
     name: String,
@@ -145,7 +156,7 @@ impl Output {
                         _ => {continue;}
                     };
                     let doc = doc(&tokens, i);
-                    let sign = fn_signature(&tokens, i - 1);
+                    let sign = fn_signature(&tokens, i);
                     
                     Output{r#type, name, doc, information: Info::Function { signature: sign }}
                 }
@@ -182,6 +193,10 @@ impl Output {
                     Output{r#type, name, doc, information: Info::Trait { signature: info.0, additional_doc: ad_doc, required_methods: info.1, provided_methods: info.2, implementations: impls }}
                 }
                 Token::Keyword(Keyword::Mod) => {
+                    if tokens[i + 2] == Token::LeftBrace {
+                        skip_count = skip_impl_block(&tokens, i);
+                    }
+
                     let r#type = Type::Module;
                     let name = match &tokens[i + 1] {
                         Token::Ident(idn) => {
@@ -190,7 +205,9 @@ impl Output {
                         _ => {continue;}
                     };
                     let doc = doc(&tokens, i);
-                    Output{r#type, name, doc, information: Info::Blanc}
+                    let content = get_module_content(&tokens, i);
+
+                    Output{r#type, name, doc, information: Info::Module { content }}
                 }
                 Token::DocComment(DocComments::Outer(_)) => {
                     let r#type = Type::OuterComment;
@@ -235,6 +252,54 @@ impl fmt::Display for Output {
     }
 }
 
+fn get_module_content(tokens: &[Token], index: usize) -> Vec<Output> {
+    let mut content = Vec::new();
+    let mut i = index;
+    let mut brace_counter = 0;
+
+    
+
+    loop {
+        match &tokens[i] {
+            Token::Semicolon => {
+                let filename = format!("input_files/{}.nr", tokens[i - 1]);
+                content = get_doc(&filename).unwrap();
+                break;
+            }
+            Token::LeftBrace => {
+                brace_counter += 1;
+                i += 1;
+                while brace_counter != 0 {
+                    match &tokens[i] {
+                        Token::LeftBrace => {
+                            brace_counter += 1;
+                            content.push(SpannedToken::new(tokens[i].clone(), Span::inclusive(0, 1)));
+                            i += 1;
+                        }
+                        Token::RightBrace => {
+                            brace_counter -= 1;
+                            content.push(SpannedToken::new(tokens[i].clone(), Span::inclusive(0, 1)));
+                            i += 1;
+                        }
+                        _ => {
+                            content.push(SpannedToken::new(tokens[i].clone(), Span::inclusive(0, 1)));
+                            i += 1;
+                        }
+                    }
+                }
+                break;
+            }
+            _ => {
+                i += 1;
+            }
+        };
+    }
+
+    let res = Output::to_output(content);
+
+    res
+}
+
 fn skip_impl_block(tokens: &[Token], index: usize) -> usize {
     let mut brace_counter = 0;
     let mut i = index;
@@ -274,12 +339,12 @@ fn fn_signature(tokens: &[Token], index: usize) -> String {
     let mut res = String::new();
     let mut i = index;
     loop {
-        match &tokens[i + 1] {
+        match &tokens[i] {
             Token::LeftBrace | Token::Semicolon => {
                 break;
             }
             _ => {
-                res.push_str(&tokens[i + 1].to_string());
+                res.push_str(&tokens[i].to_string());
                 res.push_str(" ");
                 i += 1;
             }
@@ -375,7 +440,7 @@ fn trait_info(tokens: &[Token], index: usize) -> (String, Vec<Function>, Vec<Fun
                                 _ => {break;}
                             };
                             let doc = doc(&tokens, i + 1);
-                            let fn_sign = fn_signature(&tokens, i);
+                            let fn_sign = fn_signature(&tokens, i + 1);
 
                             loop {
                                 match tokens[i + 1] {
@@ -474,6 +539,9 @@ fn additional_doc(tokens: &[Token], index: usize) -> String {
 }
 
 fn doc(tokens: &[Token], index: usize) -> String {
+    if index == 0 {
+        return String::new();
+    }
     let res = match &tokens[index - 1] {
         Token::DocComment(DocComments::Single(dc)) | 
         Token::DocComment(DocComments::Block(dc)) => {
@@ -665,7 +733,7 @@ impl Implementation {
                                                     _ => {continue;}
                                                 };
                                                 let doc = doc(&tokens, i);
-                                                let sign = fn_signature(&tokens, i - 1);
+                                                let sign = fn_signature(&tokens, i);
                                                 
                                                 functions.push(Function{ name, doc, signature: sign, is_method: true });
 
@@ -754,37 +822,44 @@ struct SearchResults {
     results: Vec<Output>
 }
 
-fn generate_search_page(res: SearchResults) -> Result<(), Box<dyn std::error::Error>> {
+fn generate_search_page(res: SearchResults, module_name: String) -> Result<(), Box<dyn std::error::Error>> {
     let rendered_html = res.render().unwrap();
 
-    let mut file = File::create("generated_doc/search_results.html")?;
+    let filename = format!("generated_doc/search_results_{}.html", module_name);
+
+    let mut file = File::create(filename)?;
     file.write_all(rendered_html.as_bytes())?;
 
     Ok(())
 }
 
-/// the main function of the program
-/// generates all documentation files
-/// the input file is a file with a Noir code
-pub fn generate_doc(input_file: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let doc = get_doc(input_file).unwrap();
+fn extract_filename(filename_with_path: &str) -> Option<&str> {
+    let path = Path::new(filename_with_path);
+    match path.file_stem() {
+        Some(file_stem) => file_stem.to_str(),
+        None => None,
+    }
+}
 
-    let tokens = Output::to_output(doc);
+fn generate_module_page(module: AllOutput) -> Result<(), Box<dyn std::error::Error>> {
+    let rendered_html = module.render().unwrap();
 
-    let out = AllOutput{ all_output: tokens.clone(), filename: input_file.to_string() };
+    let fname = format!("generated_doc/{}.html", module.filename);
 
-    let rendered_html = out.render().unwrap();
-
-    let mut file = File::create("generated_doc/mainpage.html")?;
+    let mut file = File::create(fname)?;
     file.write_all(rendered_html.as_bytes())?;
 
-    generate_code_page(input_file)?;
+    let fname = format!("input_files/{}.nr", module.filename);
 
-    let res = SearchResults{ results: out.all_output };
+    if fs::metadata(&fname).is_ok() {
+        generate_code_page(&fname)?;
+    }
 
-    generate_search_page(res)?;
+    let res = SearchResults{ results: module.all_output.clone() };
 
-    for i in tokens.iter() {
+    generate_search_page(res, module.filename)?;
+
+    for i in module.all_output.iter() {
         match i.r#type {
             Type::Function => {
                 generate_function_pages(
@@ -820,9 +895,34 @@ pub fn generate_doc(input_file: &str) -> Result<(), Box<dyn std::error::Error>> 
                     }
                 )?;
             }
+            Type::Module => {
+                generate_module_page(
+                    AllOutput { 
+                        all_output: i.information.get_content().unwrap(), 
+                        filename: i.name.clone() 
+                    } 
+                )?;
+            }
             _ => {}
         }
     }
+
+    Ok(())
+}
+
+/// the main function of the program
+/// generates all documentation files
+/// the input file is a file with a Noir code
+pub fn generate_doc(input_file: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let doc = get_doc(input_file).unwrap();
+
+    let tokens = Output::to_output(doc);
+
+    let filename = extract_filename(input_file).unwrap().to_string();
+
+    let out = AllOutput{ all_output: tokens.clone(), filename };
+
+    generate_module_page(out)?;
 
     Ok(())
 }
@@ -851,5 +951,50 @@ pub fn get_map(input_file: &str) -> Map {
 fn main() {
     generate_doc("input_files/prog.nr").unwrap();
 
-    dbg!(get_map("input_files/prog.nr"));
+    dbg!(get_map("input_files/struct_example.nr"));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn one_file() {
+        assert!(generate_doc("input_files/another_module.nr").is_ok());
+    }
+
+    #[test]
+    fn many_files() {
+        assert!(generate_doc("input_files/prog.nr").is_ok());
+    }
+
+    #[test]
+    fn function_output() {
+        let mut map = HashMap::new();
+        map.insert(Info::Function { signature: "fn main ( x : Field , y : pub Field ) ".to_string() }, "doc comment".to_string());
+
+        let result = Map { 
+            map
+        };
+
+        assert_eq!(get_map("input_files/function_example.nr"), result);
+    }
+
+    #[test]
+    fn structure_output() {
+        let mut map = HashMap::new();
+        map.insert(
+            Info::Struct { 
+                signature: "struct MyStruct {\n/* private fields */\n}".to_string(), 
+                additional_doc: "".to_string(), 
+                implementations: vec![] 
+            }, 
+            "struct".to_string());
+
+        let result = Map { 
+            map
+        };
+
+        assert_eq!(get_map("input_files/struct_example.nr"), result);
+    }
 }
