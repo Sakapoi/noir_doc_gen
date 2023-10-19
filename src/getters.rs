@@ -363,9 +363,12 @@ pub(crate) fn get_doc(input_file: &str) -> Result<Vec<SpannedToken>, Box<dyn std
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
 
-    let parsed_str = Lexer::lex(&contents);
+    let mut lexer = Lexer::new(&contents);
+    lexer = lexer.skip_comments(false);
 
-    Ok(parsed_str.0.0)
+    let token = lexer.into_iter().map(|a| a.unwrap()).collect::<Vec<_>>();
+
+    Ok(token)
 }
 
 #[derive(Template)]
